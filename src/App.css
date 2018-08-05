@@ -1,0 +1,8 @@
+.spacer {
+  background: grey;
+  height: 200px;
+}
+
+.spacer:nth-child(odd){
+  opacity: .7;
+}
