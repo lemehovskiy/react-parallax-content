@@ -13,11 +13,17 @@ class App extends Component {
                 <div className="spacer"></div>
                 <div className="spacer"></div>
                 <div className="spacer"></div>
+                <div className="spacer"></div>
+                <div className="spacer"></div>
+                <div className="spacer"></div>
+                <div className="spacer"></div>
 
                 <ParallaxContent>
-                    Test1
+                    Lorem ipsum
                 </ParallaxContent>
 
+                <div className="spacer"></div>
+                <div className="spacer"></div>
                 <div className="spacer"></div>
                 <div className="spacer"></div>
                 <div className="spacer"></div>

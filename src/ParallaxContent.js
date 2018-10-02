@@ -1,7 +1,7 @@
 import React, {Component, PureComponent} from 'react'
 import ReactDOM from 'react-dom';
 
-import {TweenLite, Power2, TimelineLite} from "gsap/TweenMax";
+import {TweenLite} from "gsap/TweenMax";
 
 class ParallaxContent extends PureComponent {
 
@@ -9,7 +9,8 @@ class ParallaxContent extends PureComponent {
         super(props);
 
         this.state = {
-            val: 0
+            val: 0,
+            isOnScreen: false
         }
 
         this.dom = {};
@@ -17,36 +18,76 @@ class ParallaxContent extends PureComponent {
 
     componentDidMount() {
         this.dom.root = ReactDOM.findDOMNode(this);
-        this.update(this.dom.root);
+        window.addEventListener('scroll', this.handleScroll.bind(this));
     }
 
-    update(element) {
-
+    handleScroll() {
         let self = this;
-        let test = {val: 0}
 
-        TweenLite.to(element, 1, {
-            x: 10, onUpdate() {
-                self.setState({
-                    val: test.val
-                })
-            }
-        })
+        let clientRect = this.dom.root.getBoundingClientRect();
+
+        let scrollTop = window.pageYOffset;
+        let windowHeight = window.innerHeight;
+        let triggerPosition = scrollTop + windowHeight;
+
+        let elementHeight = clientRect.height;
+        let elementOffsetTop = clientRect.top + scrollTop;
+
+        let animationTriggerStart = elementOffsetTop;
+        let animationTriggerEnd = animationTriggerStart + windowHeight;
+
+        let animationLength = animationTriggerEnd - animationTriggerStart;
+
+        if (triggerPosition > animationTriggerStart && triggerPosition < animationTriggerEnd + elementHeight) {
+            this.handleIsOnScreen(true);
+        }
+
+        else {
+            this.handleIsOnScreen(false);
+        }
+
+        if (this.state.isOnScreen) {
+            self.animate(self.getElementAnimatePosition({
+                triggerPosition: triggerPosition,
+                elementOffsetTop: elementOffsetTop,
+                animationLength: animationLength
+            }));
+        }
     }
 
+    animate(y) {
+        TweenLite.to(this.dom.root, 0.3, {y: y + 'px'});
+    }
+
+    getElementAnimatePosition(options) {
+        let centerPixelShift = options.triggerPosition - options.elementOffsetTop - (options.animationLength * 0.5),
+            centerPercentShift = centerPixelShift / (options.animationLength / 100) * 2;
+
+        return 50 / 100 * centerPercentShift;
+    }
+
+    handleIsOnScreen(isOnScreen) {
+        if (!this.state.isOnScreen && isOnScreen) {
+            this.setState({
+                isOnScreen: true
+            })
+        }
+        else if (this.state.isOnScreen && !isOnScreen) {
+            this.setState({
+                isOnScreen: false
+            })
+        }
+    }
 
     render() {
-
         return (
-            <div>
-                <div className="parallax" ref={this.myRef}>
+            <div className="parallax-content">
+                <div className="parallax-content-inner">
                     {this.props.children}
                 </div>
             </div>
         )
     }
-
 }
-
 
 export default ParallaxContent
