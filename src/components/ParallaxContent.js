@@ -13,6 +13,8 @@ class ParallaxContent extends PureComponent {
             isOnScreen: false
         }
 
+        this.duration = this.props.duration || 1;
+        this.shift = this.props.shift || 20;
         this.dom = {};
     }
 
@@ -56,14 +58,14 @@ class ParallaxContent extends PureComponent {
     }
 
     animate(y) {
-        TweenLite.to(this.dom.root, 0.3, {y: y + 'px'});
+        TweenLite.to(this.dom.root, this.duration, {y: y + 'px'});
     }
 
     getElementAnimatePosition(options) {
         let centerPixelShift = options.triggerPosition - options.elementOffsetTop - (options.animationLength * 0.5),
             centerPercentShift = centerPixelShift / (options.animationLength / 100) * 2;
 
-        return 50 / 100 * centerPercentShift;
+        return this.shift / 100 * centerPercentShift;
     }
 
     handleIsOnScreen(isOnScreen) {
@@ -80,11 +82,10 @@ class ParallaxContent extends PureComponent {
     }
 
     render() {
+        console.log(this.props);
         return (
-            <div className="parallax-content">
-                <div className="parallax-content-inner">
-                    {this.props.children}
-                </div>
+            <div className={this.props.className}>
+                {this.props.children}
             </div>
         )
     }
